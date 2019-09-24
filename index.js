@@ -1,10 +1,14 @@
 const SkeletonBuilder = require('./src/skeletonCore');
 
+const execPath = 'C:/Users/11974/AppData/Local/Google/Chrome/Application/chrome.exe'; // chrome 路径 
+// const execPath = 'C:/Program Files (x86)/Google/Chrome/Application/chrome.exe'
+
 // test code
 const fs = require('fs');
 let skeletonBuilder = new SkeletonBuilder({
-    preview: true,
-    defer: 35000,
+    preview: false, // 是否调出浏览器
+    isNext: true, // 预览 是否生成骨架屏
+    defer: 5000,
     device: 'iPhone 6',
     loading: 'shine',
     image: {
@@ -12,7 +16,8 @@ let skeletonBuilder = new SkeletonBuilder({
         color: '#EFEFEF',
         shapeOpposite: [],
         fixedSize: true
-    }
+    },
+    execPath
 }, console.log);
 
 
@@ -20,8 +25,8 @@ let skeletonBuilder = new SkeletonBuilder({
     (async () => {
         let detailPath = 'home' // 首页
         
-        const baseUrl = 'http://39.106.12.146:81/#/'
-        let urlList = ['home']
+        const baseUrl = 'http://192.168.1.166:8082/#/'
+        let urlList = ['home', 'about']
        
 
         // const baseUrl = ' http://192.168.1.166:8090/?fMer=LYY2#/'

@@ -5,8 +5,9 @@ const {parse, toPlainObject, fromPlainObject, generate} = require('css-tree');
 const {sleep, genScriptContent, htmlMinify, collectImportantComments, createLog} = require('./util');
 const {defaultOptions} = require('./config/config');
 
+
 const puppeteer = require('puppeteer-core');
-const execPath = 'C:/Users/11974/AppData/Local/Google/Chrome/Application/chrome.exe'; // chrome 路径 
+
 
 class SkeletonCore {
 
@@ -33,7 +34,7 @@ class SkeletonCore {
                 devtools: openDevTools,
                 // 关闭headless模式, 不会打开浏览器
                 headless: headless,
-                executablePath: execPath
+                executablePath: options.execPath
             });
             
         } catch (err) {
@@ -69,7 +70,7 @@ class SkeletonCore {
         const stylesheetAstObjects = {};
         const stylesheetContents = {};
         const page = await this.newPage();
-        const {cookies, preview, waitForSelector} = this.options;
+        const {cookies, preview, isNext, waitForSelector} = this.options;
 
         /**************************page 事件****************************/
         await page.setRequestInterception(true);
@@ -124,7 +125,7 @@ class SkeletonCore {
        
 
         // 预览模式
-        // if (preview) return Promise.resolve(true);
+        if (!isNext) return Promise.resolve(true);
 
         let {styles, cleanedHtml} = await page.evaluate(() => Skeleton.getHtmlAndStyle());
         
@@ -235,7 +236,9 @@ class SkeletonCore {
         // so don't need to use another mimifier.
         const h5Meta = `<meta name="viewport" content="initial-scale=1.0,user-scalable=no,maximum-scale=1,width=device-width"/>`;
         cleanedHtml = cleanedHtml.replace('id="app"', '')
+        cleanedHtml = cleanedHtml.replace(/data-v-/g, 'data-v-skeleton')
         finalCss = finalCss.replace('#app', `#skeleton_${name}` )
+        finalCss = finalCss.replace(/data-v-/g, 'data-v-skeleton')
         let shellHtmlHome = `<!DOCTYPE html>
             <html lang="en">
             
@@ -275,9 +278,9 @@ class SkeletonCore {
                 </style>
                 $$html$$
          `
-         if (name === detailPath) {
+        if (name === detailPath) {
             shellHtml =  shellHtmlHome 
-         }
+        }
         shellHtml = shellHtml
             .replace('$$css$$', finalCss)
             .replace('$$html$$', cleanedHtml);
